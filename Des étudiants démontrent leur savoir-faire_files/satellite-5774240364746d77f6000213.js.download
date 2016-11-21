@@ -1,0 +1,186 @@
+var tc_cxsense_map = {
+    '.app.tcmedianouvelles.ca':'1141832049605732450',
+    '.journalmetro.com':'1140706149769887824',
+    '.motojournalweb.com':'1131698344339854817',
+    '.quadnet.ca':'1131698344339854818',
+    '.guideautoweb.com':'1131698344339854819',
+    '.autogo.ca':'1131698344339854820',
+    '.trianglenews.sk.ca': '1141835779222027428',
+    '.grenfellsun.sk.ca': '1141835779222027427',
+  '.rdstar.sk.ca':'1139583987448210178',
+    '.mjtimes.sk.ca': '1140709887418197802',
+    '.oxbowherald.sk.ca': '1140709887418197801',
+    '.swbooster.com': '1141835779222027426',
+    '.cyclecanadaweb.com':'1132824244173120441',
+    '.montrealracing.com':'1135076043932243689',
+    '.lanouvelle.net':'1136202549323200312',
+    '.laction.com':'1136202549323200313',
+    '.journalsaint-francois.ca':'1136202549323200314',
+    '.courrierfrontenac.qc.ca':'1136202549323200315',
+    '.canadafrancais.com':'1136202549323200316',
+    '.hebdorivenord.com':'1136202549323200317',
+    '.quebechebdo.com':'1136202549323200318',
+    '.lelacstjean.com':'1136202549323200319',
+    '.granbyexpress.com':'1136202549323200320',
+    '.journaldechambly.com':'1136202549323200321',
+    '.oeilregional.com':'1136202549323200322',
+    '.lapetitenation.com':'1136202549323200323',
+    '.lechodemaskinonge.com':'1136202549323200324',
+    '.lemirabel.ca':'1136202549323200325',
+    '.journallehavre.ca':'1136202549323200326',
+    '.lechodelabaie.ca':'1136202549323200327',
+    '.coupdoeil.info':'1136202549323200328',
+    '.lactiondautray.com':'1136202549323200329',
+    '.journallarevue.com':'1136202549323200330',
+    '.infodeste-julie.qc.ca':'1136202549323200331',
+    '.lappel.com':'1136202549323200332',
+    '.charlesbourgexpress.com':'1136202549323200333',
+    '.lactuel.com':'1136202549323200334',
+    '.capebretonpost.com':'1136202549323200335',
+    '.thewesternstar.com':'1136202549323200336',
+    '.cumberlandnewsnow.com':'1136202549323200337',
+    '.kingscountynews.ca':'1136202549323200338',
+    '.cbncompass.ca':'1136202549323200341',
+    '.thevanguard.ca':'1136202549323200342',
+    '.thepacket.ca':'1136202549323200343',
+    '.hantsjournal.ca':'1136202549323200344',
+    '.novanewsnow.com':'1136202549323200345',
+    '.theadvance.ca':'1136202549323200346',
+    '.thelabradorian.ca':'1136202549323200347',
+    '.lavantage.qc.ca':'1137328449334516937',
+    '.lerefletdulac.com':'1137328449334516938',
+    '.cornwallseawaynews.com':'1137328449334516939',
+    '.cybersoleil.com':'1137328449334516940',
+    '.lechodelatuque.com':'1137328449334516941',
+    '.lavoixdusud.com':'1137328449334516942',
+    '.linformationdunordsainteagathe.ca':'1137328449334516943',
+    '.lhebdojournal.com':'1137328449334516944',
+    '.lereflet.qc.ca':'1137328449334516945',
+    '.leclaireurprogres.ca':'1137328449334516946',
+    '.lavantagegaspesien.com':'1137328449334516947',
+    '.nouvelleshebdo.com':'1137328449334516948',
+    '.journallenord.com':'1137328449334516949',
+    '.leprogres.net':'1137328449334516950',
+    '.lejournaldespaysdenhautlavallee.ca':'1137328449334516951',
+    '.journalleguide.com':'1137328449334516952',
+    '.lasentinelle.ca':'1137328449334516953',
+    '.lepharillon.ca':'1137328449334516954',
+    '.lepeuplelotbiniere.ca':'1137328449334516955',
+    '.linformationdunordvalleedelarouge.ca':'1137328449334516956',
+    '.orleansstar.ca':'1137328449334516957',
+    '.lexpressmontcalm.com':'1137328449334516958',
+    '.expressdessources.com':'1137328449334516959',
+    '.brossardeclair.ca':'1137328449334516960',
+    '.la-seigneurie.qc.ca':'1137328449334516961',
+    '.the-gleaner.ca':'1137328449334516962',
+    '.lequebecexpress.com':'1137328449334516963',
+    '.expressottawa.ca':'1137328449334516964',
+    '.corriereitaliano.com':'1137328449334516965',
+    '.journalpioneer.com':'1137328449334516967',
+    '.southerngazette.ca':'1137328449334516968',
+    '.ganderbeacon.ca':'1137328449334516969',
+    '.annapoliscountyspectator.ca':'1137328449334516970',
+    '.northernpen.ca':'1137328449334516971',
+    '.sackvilletribunepost.com':'1137328449334516972',
+    '.atlanticfarmfocus.ca':'1137328449334516973',
+    '.theaurora.ca':'1137328449334516974',
+    '.thenorwester.ca':'1137328449334516975',
+    '.ngnews.ca':'1137328449334516979',
+    '.journalexpress.ca':'1138454349299326558',
+    '.info07.com':'1138454349299326559',
+    '.lhebdodustmaurice.com':'1138454349299326560',
+    '.courrierdusaguenay.com':'1138454349299326561',
+    '.courrierlaval.com':'1138454349299326562',
+    '.les2riveslavoix.ca':'1138454349299326563',
+    '.lecourriersud.com':'1138454349299326564',
+    '.lecourrierdusud.ca':'1138454349299326565',
+    '.linformationdunordmonttremblant.ca':'1138454349299326566',
+    '.letoiledulac.com':'1138454349299326567',
+    '.beaucemedia.ca':'1138454349299326568',
+    '.lepeuplelevis.ca':'1138454349299326569',
+    '.lavantposte.ca':'1138454349299326570',
+    '.laveniretdesrivieres.com':'1138454349299326571',
+    '.lejournaldesherbrooke.ca':'1138454349299326572',
+    '.lautrevoix.com':'1138454349299326573',
+    '.beauportexpress.com':'1138454349299326574',
+    '.lebulletin.net':'1138454349299326575',
+    '.lejacquescartier.com':'1138454349299326576',
+    '.letudiantoutaouais.ca':'1138454349299326577',
+    '.trurodaily.com':'1138454349299326578',
+    '.digbycourier.ca':'1138454349299326579',
+    '.gfwadvertiser.ca':'1138454349299326580',
+    '.gulfnews.ca':'1138454349299326581',
+    '.thecoastguard.ca':'1138454349299326582',
+    '.lportepilot.ca':'1138454349299326583',
+    '.lafrontiere.ca':'1139578605085513193',
+    '.publisac.ca':'1139578605085513198',
+    '.investmentexecutive.com':'1139580249931984185',
+    '.tctranscontinental.com':'1140704420153204817',
+    '.thetelegram.com':'1140704504923711815',
+    '.finance-investissement.com':'1140706149769887812',
+    '.lesaffaires.com':'1141830404760931431',
+    '.lechoabitibien.ca':'1141830404760931434',
+    '.theguardian.pe.ca':'1141830404760931435'
+}
+function matchUrl(str){
+    str = str.replace(/\./g,"\\.");
+    var r = new RegExp(str);
+    return r.test(window.location.hostname);
+}
+
+var cid = '';
+
+for(var i in tc_cxsense_map){
+    if(matchUrl(i))
+        cid = tc_cxsense_map[i];
+}
+
+// This is for TC Media Nouvelle.
+// Since the page is in an iframe, we need to detect that it's from the correct place
+if(/edge\.publish\.adobe\.com/.test(location.hostname) && /app\.tcmedianouvelles\.ca/.test(document.referrer))
+    cid = '';
+
+// This is for UNIS sites with puzzle stuff in it.
+// Since it's on the same domain as the page, let's just assume that no one has a page like that.
+// If it's not the case, oh well.
+if(/\/puzzles\/iframe\.php/.test(document.location.pathname))
+    cid = '';
+
+var xmlhttp = new XMLHttpRequest();
+
+xmlhttp.onreadystatechange = function() {
+    var fsa = 'no fsa';
+    if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+        if(cid != ''){
+            window.cX = window.cX || {}; window.cX.callQueue = window.cX.callQueue || [];
+            window.cX.callQueue.push(['setSiteId', cid]);
+            if (xmlhttp.status == 200)
+                try{fsa = JSON.parse(xmlhttp.responseText).postal_code; } catch (e) {}
+            if(fsa == undefined || !fsa)
+                fsa = 'no fsa';
+            window.cX.callQueue.push(['setCustomParameters', { 'tcm-postal_code': fsa}]);
+            window.cX.callQueue.push(['sendPageViewEvent']);
+
+
+            (function(d,s,e,t){e=d.createElement(s);e.type='text/java'+s;e.async='async';
+                               e.src='http'+('https:'===location.protocol?'s://s':'://')+'cdn.cxense.com/cx.js';
+                               t=d.getElementsByTagName(s)[0];t.parentNode.insertBefore(e,t);})(document,'script');
+
+            window.cX.callQueue.push(['invoke', function() {
+                var segments = window.cX.getUserSegmentIds({ persistedQueryId: '9c07976b3e3a026ee211f3c9c22c9e313e0cc821' },
+                                                           { identities: [{ id: cX.getUserId(), type: 'cx'}] });
+                e=document.createElement("img");
+                sss="";
+                for (seg in segments) {
+                    sss = sss + ",cxsegment_" + segments[seg];
+                }
+                e.src='http://ib.adnxs.com/seg?add_Code='+sss.substring(1)+ '&&member=2437 width="1" height="1"/>';
+                document.body.appendChild(e);
+            }]);
+        }
+    }
+};
+
+xmlhttp.open("GET", "http://geoip.tcadops.ca/geoip", true);
+xmlhttp.send();
+

@@ -1,0 +1,22 @@
+_satellite.pushBlockingScript(function(event, target, $variables){
+  if($('#tc-site-context').attr('data-tc-content-type')){
+    var tmeta = document.createElement('meta');
+    tmeta.name = 'cXenseParse:tcm-pagetype';
+    tmeta.content = $('#tc-site-context').attr('data-tc-content-type');
+    document.head.appendChild(tmeta);
+}
+
+if($('#tc-site-context').attr('data-tc-section')){
+    var smeta = document.createElement('meta');
+    smeta.name = 'cXenseParse:tcm-sitesection';
+    smeta.content = $('#tc-site-context').attr('data-tc-section');
+    document.head.appendChild(smeta);
+}
+
+if($('#tc-site-context').attr('data-tc-category')){
+    var ssmeta = document.createElement('meta');
+    ssmeta.name = 'cXenseParse:tcm-sitesubsection';
+    ssmeta.content = $('#tc-site-context').attr('data-tc-category');
+    document.head.appendChild(ssmeta);
+}
+});

@@ -1,0 +1,10 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  var fbMetaElementValue = _satellite.getDataElement("FB_INSTANT_ARTICLE_META");
+if (fbMetaElementValue != "") {
+  $('head').append('<meta property="fb:pages" content="' + fbMetaElementValue  +'" />');
+//  var meta = document.createElement('meta');
+//	meta.property = "fb:pages";
+//	meta.content = fbMetaElementValue;
+//	document.getElementsByTagName('head')[0].appendChild(meta);
+}
+});

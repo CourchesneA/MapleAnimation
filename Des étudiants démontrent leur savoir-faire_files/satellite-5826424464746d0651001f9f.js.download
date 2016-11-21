@@ -1,0 +1,7 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  var s = document.createElement('script');
+s.src = "//cdn.tcadops.ca/cookie-consent/script_v0.0.4.js";
+
+/*if(/thetelegram\.com/.test(location.href))*/
+document.head.appendChild(s);
+});

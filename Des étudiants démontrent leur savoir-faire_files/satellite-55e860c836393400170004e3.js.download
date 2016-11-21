@@ -1,0 +1,219 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  
+        $(function() {
+            // activate/deactivate debug
+            isDebug = true;
+            
+            // default values and initialisation
+            var isInsightAdUnitInserted = false;
+            var insightAdUnitPosition = 200;
+            var elementBeforeInsightAdUnit = null;
+            var insightAdUnitHeight = $(window).height();
+            var insightAdUnitWidth = "850px";
+            var screenWidth = $(window).width();
+            var isInsightAdDisplayed = false;
+            var wordCounter = 0;
+            var device = "";
+            var isDesktop = false;
+            //var insightAdUnitContent = "<div id='insightAdUnitDiv' style='background-color:red; border: black solid 4px; height: 0px; text-align: center; opacity: 0;'>Insight Ad Unit</div>";
+            var insightAdUnitContent = "";
+            var articleContentDivClass = " .media_description_right"; // large template
+            //var cellphoneSelector = "#wrapper.article-device-view section.sec_leftContent h2";
+            var isReady = false;
+            
+            /*************************DO NOT INCLUDE IN PROD***************************************** /
+            // random "ad"
+            // Returns a random number between min (inclusive) and max (exclusive)
+            function getRandomArbitrary(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+            var rand = getRandomArbitrary(0, 100);
+            if (rand < 25) {
+                insightAdUnitContent = "<div id='insightAdUnitDiv' style='height: 0px; text-align: center; opacity: 0; clear: both;'><iframe src='http://qa.rb.lecourrierdusud.ca/content/dam/tc/test-site/images/2015/9/4/101438745-cat-conjunctivitis-causes.jpg' width='850px' height='650px' style='background-color: green; overflow: hidden' scrolling='no'></div>";
+            } else if (rand < 50) {
+                insightAdUnitContent = "<div id='insightAdUnitDiv' style='height: 0px; text-align: center; opacity: 0; clear: both;'><iframe src='http://qa.rb.lecourrierdusud.ca/content/dam/tc/test-site/images/2015/9/4/my-first-cat-orange-tabby-vertical.jpg' width='850px' height='843px' style='background-color: green; overflow: hidden' scrolling='no'></div>";
+            } else if (rand < 75) {
+                insightAdUnitContent = "<div id='insightAdUnitDiv' style='height: 0px; text-align: center; opacity: 0; clear: both;'><iframe src='http://qa.rb.lecourrierdusud.ca/content/dam/tc/test-site/images/2015/9/4/beibei-standing-cat.jpg' width='850px' height='755px' style='background-color: green; overflow: hidden' scrolling='no'></div>";
+            } else if (rand <= 100) {
+                insightAdUnitContent = "<div id='insightAdUnitDiv' style='height: 0px; text-align: center; opacity: 0; clear: both;'><iframe src='http://qa.rb.lecourrierdusud.ca/content/dam/tc/test-site/images/2015/9/4/6784063-cute-cats-hd.jpg' width='850px' height='800px' style='background-color: green; overflow: hidden' scrolling='no'></div>";
+            }
+            
+            /**************************DO NOT INCLUDE IN PROD - END****************************************/
+            
+            // textHeader
+            // fetch data-tc-language from site-context
+            var lang = "";
+            var textHeader = "";
+            var textHeaderArticleBelow = "";
+            if ($("div#tc-site-context").attr("data-tc-language")) {
+                lang = $("div#tc-site-context").attr("data-tc-language");
+            }
+            if (lang == "it") {
+                textHeader = "Pubblicità";
+                textHeaderArticleBelow = " - Leggere il seguito dell'articolo";
+            } else if (lang == "fr") {
+                textHeader = "Publicité";
+                textHeaderArticleBelow = " - Lire la suite de l'article ci-dessous";
+            } else {
+                textHeader = "Advertisement";
+                textHeaderArticleBelow = " - Article continues below";
+            }
+            
+            
+            // determine mobile / desktop
+            if ($("#wrapper.article-desktop-view").css("display") == "none") {
+                device = "#wrapper.article-device-view";
+                isDesktop = false;
+            } else {
+                device = "#wrapper.article-desktop-view";
+                isDesktop = true;
+            }
+            
+            // determine template (small vs large)
+            if ($(" .smallHorizontal_img_description").length > 0) {
+                if ($("#wrapper.article-desktop-view").css("display") == "none") {
+                    articleContentDivClass = " .media_description_right";
+                } else {
+                    articleContentDivClass = " .smallHorizontal_img_description";
+                }
+                logger("Small template detected: length: "+$(articleContentDivClass).length, isDebug);
+            }
+            
+            // fetch insightAdUnitPosition from site-context
+            if ($("div#tc-site-context").attr("data-tc-insight-ad-unit-position")) {
+                insightAdUnitPosition = $("div#tc-site-context").attr("data-tc-insight-ad-unit-position");
+            }
+            
+            // determine ratio
+            if (screenWidth >= 992 && screenWidth < 1200) {
+                insightAdUnitPosition = insightAdUnitPosition * 4 / 5;
+            } else if (screenWidth >= 769 && screenWidth < 991) {
+                insightAdUnitPosition = insightAdUnitPosition * 3 / 5;
+            } else if (screenWidth < 769) {
+                insightAdUnitPosition = insightAdUnitPosition * 2 / 5;
+            }
+            
+            // insert the insight ad in the right place
+            // also get the element after which the insight ad should be inserted
+            $(device + articleContentDivClass).children().each(function( index ) {
+                // count words in P and DIV tags
+                if (($(this).prop("tagName") === "P" || $(this).prop("tagName") === "DIV") && !isInsightAdUnitInserted ) {
+                    wordCounter += $(this).text().split(' ').length;
+                    logger($(this).prop("tagName")+" : "+ $(this).text(), isDebug);
+                    logger("wordCounter: "+wordCounter + " (+" + $(this).text().split(' ').length + ")", isDebug);
+                    if (wordCounter > insightAdUnitPosition) {
+                        logger("Location found: Insight Ad Unit container inserted", isDebug);
+                        $(this).after(createInsightAdUnitContainer(textHeader+textHeaderArticleBelow));
+                        elementBeforeInsightAdUnit = $(this);
+                        isInsightAdUnitInserted = true;
+                    }
+                }
+            });
+            
+            // if insightdUnit has NOT been injected, put it at the end of the content
+            if (!isInsightAdUnitInserted) {
+                logger("InsightdUnit has NOT been injected, put it at the end of the content: '"+articleContentDivClass+"'", isDebug);
+                $(articleContentDivClass).append(createInsightAdUnitContainer(textHeader));
+            }
+            
+            /** Display part **/
+            
+            // wait for it?
+            $('#insightAdUnitDiv').bind('DOMNodeInserted DOMSubtreeModified DOMNodeRemoved', function(event) {
+                logger("InsightAdUnitDiv content modified, check for iframe", isDebug);
+                if ($('#insightAdUnitDiv iframe').first().contents().find("head").text() != "" && !isReady) {
+                    // adjusts the insight ad unit container size
+                    // opens the content and fade in insight ad in the page when in viewport
+                    logger("Returned iframe not empty! ("+$("#insightAdUnitDiv iframe:first-of-type").width()+"x"+$("#insightAdUnitDiv iframe:first-of-type").height()+")", isDebug);
+
+                    /** link handler and bind events **/
+                    var handler = onVisibilityChange();
+                    $(window).on('DOMContentLoaded load resize scroll', handler);
+                    
+                    // Bind an event to window.orientationchange that triggers when the device is turned
+                    $( window ).on( "orientationchange", function( event ) {
+                        logger("This device is in " + event.orientation + " mode!", isDebug);
+                        
+                        // adjust iframe size to fill the screen
+                        insightAdUnitWidth = $(device + articleContentDivClass).width();
+                        insightAdUnitHeight = $(window).height(); 
+                        $( "#insightAdUnitDiv" ).css("height", insightAdUnitHeight);
+                        $( "#insightAdUnitDiv iframe:first-of-type" ).css("height", insightAdUnitHeight);
+                        $( "#insightAdUnitDiv iframe:first-of-type" ).css("width", insightAdUnitWidth);
+                                
+                    });
+                    /** END - link handler and bind events **/
+                    isReady = true;
+                } else {
+                    //logger("TC_GPTAdTag.displayInsightAd has not been initialized or is empty", isDebug);
+                    logger("Returned iframe is empty!", isDebug);
+                }
+            })
+            
+            // display insight ad unit when it enters viewport
+            function onVisibilityChange() {
+                return function() {
+                    if (isElementInViewport(document.getElementById("insightAdUnitDiv")) && !isInsightAdDisplayed) {
+                        logger("Device: adjust iframe size to fill the screen", isDebug);
+                        insightAdUnitWidth = $(device + articleContentDivClass).width();
+                        
+                        $( "#insightAdUnitDiv iframe:first-of-type" ).css("height", insightAdUnitHeight);
+                        $( "#insightAdUnitDiv iframe:first-of-type" ).css("width", insightAdUnitWidth);
+                        
+                        isInsightAdDisplayed = true;
+                        $("#insightAdUnitDiv").animate({
+                            height: '+='+(insightAdUnitHeight + $("#insightAdUnitTextHeader").height()), // expand height (also add the height of the header text)
+                            opacity: '1', // fade in effect
+                            margin: "0 0 10px 0"
+                            }, 3000 //sets animation speed
+                        );
+                        //$("#insightAdUnitDiv").fadeIn(8000);
+                    }
+                }
+            }
+            
+            // create the insighAdUnitConatiner
+            function createInsightAdUnitContainer(textHeader) {
+                //insightAdUnitContent  = "<div id='insightAdUnitHeader' style='text-align: center; clear: both;'></div>";
+                insightAdUnitContent  = "<div id='insightAdUnitDiv' style='height: 0px; text-align: center; opacity: 0; clear: both;'>";
+                insightAdUnitContent += "    <div id='insightAdUnitTextHeader' style='text-align:center;color:#999;font-size:12px'>";
+                insightAdUnitContent +=          textHeader;
+                insightAdUnitContent += "        <span id='downArrow' style='margin: 0px 0px 1px 4px;display: inline-block;border-left: 5px solid transparent;border-right: 5px solid transparent;border-top: 5px solid #999;'></span>";
+                insightAdUnitContent += "    </div>";
+                insightAdUnitContent += "    <div data-tc-insight-ad-unit='1'>";
+                insightAdUnitContent += "         <script>TC_GPTAdTag.createInsightAdTag();</script>";
+                insightAdUnitContent += "    </div>";
+                insightAdUnitContent += "</div>";
+                
+                return insightAdUnitContent;
+            }
+            
+            // determine if element is in viewport
+            function isElementInViewport(el) {
+                if (typeof jQuery === "function" && el instanceof jQuery) {
+                    el = el[0];
+                }
+
+                var rect = el.getBoundingClientRect();
+
+                return (
+                    rect.top >= 0 &&
+                    rect.left >= 0 &&
+                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+                    rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+                    );
+            }
+            
+            
+            /**
+             * Allow to disable logging easily
+             * Juste set the flag to "false"
+             */
+            function logger(msg, isDebug){
+                if (isDebug)
+                    console.log(msg)
+            }
+        });
+        /** Display part - End **/
+        
+});

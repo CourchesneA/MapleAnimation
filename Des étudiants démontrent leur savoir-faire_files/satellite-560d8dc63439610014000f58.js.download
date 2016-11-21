@@ -1,0 +1,7 @@
+_satellite.pushBlockingScript(function(event, target, $variables){
+  console.log("----> Before: "+$("div#tc-site-context").attr("data-tc-section"));
+if ($("div#tc-site-context").attr("data-tc-section") == "home-page") {
+  $("div#tc-site-context").attr("data-tc-section", "homepage");
+}
+console.log("----> After: "+$("div#tc-site-context").attr("data-tc-section"));
+});

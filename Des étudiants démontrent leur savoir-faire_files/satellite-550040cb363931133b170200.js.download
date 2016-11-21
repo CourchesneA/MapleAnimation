@@ -1,0 +1,58 @@
+var endOfContentReached = 0;
+var endOfPageReached = 0;
+function onVisibilityChange () {
+  return function () {
+    if (isElementInViewport(document.getElementById("footer-wrapper")) && !endOfContentReached) {
+       ga('sitetracker.send', 'event', 'Scrolling', '100%', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+       ga('globaltracker.send', 'event', 'Scrolling', '100%', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+      endOfContentReached = 1;
+    }
+    if (isElementInViewport(document.getElementsByClassName("copyright")[0]) && !endOfPageReached) {
+       ga('sitetracker.send', 'event', 'Scrolling', 'Page Bottom', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+       ga('globaltracker.send', 'event', 'Scrolling', 'Page Bottom', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+      endOfPageReached = 1;
+    }
+  }
+}
+
+//var el = document.getElementById("footer");
+var handler = onVisibilityChange();
+
+//jQuery
+//$(window).on('DOMContentLoaded load resize scroll', handler); 
+//non-jQuery
+if (window.addEventListener) {
+  addEventListener('DOMContentLoaded', handler, false); 
+  addEventListener('load', handler, false); 
+  addEventListener('scroll', handler, false); 
+  addEventListener('resize', handler, false); 
+} else if (window.attachEvent)  {
+  attachEvent('onDOMContentLoaded', handler); // IE9+ :(
+  attachEvent('onload', handler);
+  attachEvent('onscroll', handler);
+  attachEvent('onresize', handler);
+}
+
+function isElementInViewport (el) {
+  if (el === undefined) {
+    return false;
+  }
+  
+  //special bonus for those using jQuery
+  if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+  }
+  
+  var rect = el.getBoundingClientRect();
+  // we use "rect.top+5" as bottom instead of "rect.bottom" cause the entire elemeent has 
+  // to be in the viewport. It happens (often in mobile) that the element is too big to 
+  // fit in viewport so the isElementInViewport is not triggered
+  var rectBottom = rect.top+5;
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rectBottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+  );
+}

@@ -1,0 +1,72 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  var language = _satellite.getDataElement("AEM_SITE_LANGUAGE");
+if (language == null || language == "undefined") {
+    language = "fr"
+}
+
+var container = "";
+var mode = "";
+var placement = "";
+var containerOrganic = "";
+var modeOrganic = "";
+var placementOrganic = "";
+if (language == "en") {
+    container = "taboola-english-aem-below-content-thumbnails";
+    mode = "thumbnails-f";
+    placement = "English AEM Below Content Thumbnails";
+    containerOrganic = "taboola-english-aem-desktop-organic- ";
+    modeOrganic = "organic-thumbnails-f ";
+    placementOrganic = "English AEM Desktop Organic ";
+} else {
+    container = "taboola-french-aem-below-content-thumbnails";
+    mode = "thumbnails-c";
+    placement = "French AEM Below Content Thumbnails";
+    containerOrganic = "taboola-french-aem-desktop-organic";
+    modeOrganic = "organic-thumbnails-c";
+    placementOrganic = "French AEM Desktop Organic";
+}
+
+var code = "\n" +
+"<div id=\"" + container + "\"></div>\n" +
+"<script type=\"text/javascript\">\n" +
+"  window._taboola = window._taboola || [];\n" +
+"  _taboola.push({\n" +
+"    mode: '" + mode + "',\n" +
+"    container: '" + container + "',\n" +
+"    placement: '" + placement + "',\n" +
+"    target_type: 'mix'\n" +
+"  });\n" +
+"</script>\n" +
+"<div id=\"" + containerOrganic + "\"></div>\n" +
+"<script type=\"text/javascript\">\n" +
+"  window._taboola = window._taboola || [];\n" +
+"  _taboola.push({\n" +
+"    mode: '" + modeOrganic + "',\n" +
+"    container: '" + containerOrganic + "',\n" +
+"    placement: '" + placementOrganic + "',\n" +
+"    target_type: 'mix'\n" +
+"  });\n" +
+"</script>\n" +
+"";
+
+if ($('.relatedarticles').is(":visible")) {
+  $('.relatedarticles').after(code);
+} else {
+  if ($('.article-device-view .main_section').length != null && $('.article-device-view .main_section').length >= 3) {
+      $('.article-device-view .main_section').eq($('.article-device-view .main_section').length - 3).after(code);
+    }
+}
+
+/*
+var mobileDevice = _satellite.getDataElement('AEM_SITE_MOBILE');
+if (mobileDevice != null && mobileDevice != "undefined") {
+  if (mobileDevice == "no") {
+    $('.relatedarticles').after(code);
+  } else if (mobileDevice == "yes") {
+    if ($('.article-device-view .main_section').length != null && $('.article-device-view .main_section').length >= 3) {
+      $('.article-device-view .main_section').eq($('.article-device-view .main_section').length - 3).after(code);
+    }
+  }
+}
+*/
+});

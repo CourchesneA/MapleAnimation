@@ -1,0 +1,151 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  /* -------------------------------------------------- */
+/**
+ * @package         TC - Sites Video Advertising
+ * @link            http://www.tc.tc
+ * @copyright       Copyright &copy; 2016, TC Média
+ * @author          Alfred Dagenais <alfred.dagenais@tc.tc>
+ * @version         0.0.3
+ * @script 			https://github.com/apiservicestcmedia/tc-sites_configs/blob/master/dtm/script.js
+
+  _______ _____   __  __          _ _ 
+ |__   __/ ____| |  \/  |        | (_)
+	| | | |      | \  / | ___  __| |_  __ _ 
+	| | | |      | |\/| |/ _ \/ _` | |/ _` |
+	| | | |____  | |  | |  __/ (_| | | (_| |
+	|_|  \_____| |_|  |_|\___|\__,_|_|\__,_|
+		  
+
+ */
+/* -------------------------------------------------- */
+window.tcSiteVideoAdvertising = window.tcSiteVideoAdvertising || (function () {
+	'use strict'
+
+	var util = {
+
+		_extend : function () {
+
+			var i, key;
+			for (i=1; i<arguments.length; i++)
+				for (key in arguments[i])
+					if(arguments[i].hasOwnProperty(key))
+						arguments[0][key] = arguments[i][key];
+			return arguments[0];
+
+		},
+
+		timeStamp : function () {
+			var now = new Date();
+			var time = [ now.getHours(), now.getMinutes(), now.getSeconds() ];
+			for ( var i = 1; i < 3; i++ ) {
+				if ( time[i] < 10 ) {
+					time[i] = "0" + time[i];
+				}
+			}
+			return '['+time.join(":")+'] ';
+		},
+
+		log : function( message ) {
+			if( typeof arguments[1] != 'undefined' ){
+				console.log( util.timeStamp(), message, arguments[1] );
+			}else{
+				console.log( util.timeStamp(), message );
+			}
+			
+		}
+
+	};
+ 
+	var defaults = {
+
+		
+	},
+	vars = {
+
+
+	},
+	opts;
+
+	
+
+	// Init Script function
+	var init = function(options) {
+		opts = util._extend({}, defaults, options);
+
+		// Init Variables of scripts
+		var classTCSitesConfigs = {};
+		if( typeof _satellite != 'undefined' ){
+			//console.log( '_satellite : ' + typeof _satellite, _satellite );
+			if( typeof _satellite.getVar == 'function' ){
+				//console.log( '_satellite.getVar : ' + typeof _satellite.getVar, _satellite.getVar );
+
+				classTCSitesConfigs = _satellite.getVar('TC_SITES_CONFIGS');
+				if( typeof classTCSitesConfigs != 'undefined' ){
+					//console.log( 'classTCSitesConfigs : ' + typeof classTCSitesConfigs, classTCSitesConfigs );
+				}else{
+					//console.log( 'classTCSitesConfigs : ' + typeof classTCSitesConfigs );
+					classTCSitesConfigs = {};
+				}
+
+			}else{
+				//console.log( '_satellite.getVar : ' + typeof _satellite.getVar );
+			}
+		}else{
+			//console.log( '_satellite : ' + typeof _satellite );
+		}
+
+		if( typeof classTCSitesConfigs.util != 'undefined' ){
+
+			util.log( 'TC - Sites Video Advertising Start' );
+
+			var classTCSitesConfigs = _satellite.getVar('TC_SITES_CONFIGS');
+			//util.log( typeof classTCSitesConfigs );
+ 
+ 			// Init Sites configs if needed
+			if( typeof classTCSitesConfigs != 'undefined' && typeof classTCSitesConfigs.init == 'function' ){
+				//util.log( 'fire classTCSitesConfigs init' );
+				// Init functions for page configs
+				classTCSitesConfigs.init();
+			}
+
+			var varsGlobalSite = {};
+			if( typeof classTCSitesConfigs != 'undefined' && typeof classTCSitesConfigs.getVar == 'function' ){
+				varsGlobalSite = classTCSitesConfigs.getVar();
+			}
+			util.log( 'varsGlobalSite : ', varsGlobalSite );
+
+			// Insert Teads script into pages
+			if( typeof varsGlobalSite.ads.video.teads.siteId != 'undefined' && varsGlobalSite.ads.video.teads.siteId != null ){
+
+				util.log( 'teads script started to inserted : ', varsGlobalSite.ads.video.teads );
+
+				(function (d) {
+					var js, s = d.getElementsByTagName('script')[0];
+					js = d.createElement('script');
+					js.async = true;
+					js.src = '//a.teads.tv/page/' + varsGlobalSite.ads.video.teads.siteId + '/tag';
+					s.parentNode.insertBefore(js, s);
+				})( window.document );
+
+			}
+			
+		}else{
+			console.log( '!!!!! classTCSitesConfigs util not defined !!!!' );
+		}
+
+
+		util.log( 'TC - Sites Video Advertising End' );
+
+	};
+
+	return {
+		init 			: init,
+		util 			: util
+	};
+
+}());
+
+
+// Init script for page
+tcSiteVideoAdvertising.init({});
+});

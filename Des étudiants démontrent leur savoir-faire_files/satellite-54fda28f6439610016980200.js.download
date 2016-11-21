@@ -1,0 +1,14 @@
+// set timer
+var timerStart = Date.now();
+
+// scroll detection
+userHasScrolled = false;
+window.onscroll = function (e) {
+  if (!userHasScrolled && Date.now()-timerStart > 100) {
+    //alert(Date.now()-timerStart);
+    ga('sitetracker.send', 'event', 'Scrolling', 'Start', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+    userHasScrolled = true;
+    ga('globaltracker.send', 'event', 'Scrolling', 'Start', document.URL.toString(), (Math.round((Date.now()-timerStart)/1000)).toString());
+    userHasScrolled = true;
+  }
+}

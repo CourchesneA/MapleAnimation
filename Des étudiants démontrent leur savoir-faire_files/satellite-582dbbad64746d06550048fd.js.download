@@ -1,0 +1,6 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  $('#search_boxShow').remove();
+$('.search-box').remove();
+$('ul.search').remove();
+
+});

@@ -1,0 +1,13 @@
+_satellite.pushAsyncScript(function(event, target, $variables){
+  if ($('#article-wrapper article').length) {
+    $('#article-wrapper article:first').after("<div id=\"nativo-article\"></div>");
+} else if ($('.featured-news-wrapper').length) {
+    $('.featured-news-wrapper:first').after("<div id=\"nativo-hp\"></div>");
+}
+
+var s = document.createElement("script");
+s.type = "text/javascript";
+s.src = "//s.ntv.io/serve/load.js";
+s.async = "true";
+$("head").append(s);
+});

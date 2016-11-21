@@ -1,0 +1,15 @@
+window.tcAdTag = window.tcAdTag || {};
+TC_GPTAdTag = {};
+TC_GPTAdTag.createInsightAdTag  = function(){
+	tcAdTag.triggerCreateInsightAd = true;
+};
+
+if(window.adtagjsLoaded == undefined){
+    window.adtagjsLoaded = true;
+    var target = document.getElementsByTagName("head")[0];
+    var extScript = document.createElement('script');
+    extScript.type = 'text/javascript';
+    extScript.src = ('https:' == document.location.protocol? 'https:' : 'http:') + '//cdn.tcadops.ca/gpt/adtag.js';
+    target.insertBefore(extScript, target.firstChild);
+}
+

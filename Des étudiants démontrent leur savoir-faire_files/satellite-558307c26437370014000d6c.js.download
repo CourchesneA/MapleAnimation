@@ -1,0 +1,438 @@
+//JS object used to feed data into the Adobe DIL
+// Initialise the Adobe Experience Manager Object
+var TC_AAM = TC_AAM || {};
+
+var TCMediaAam = TCMediaAam || {
+
+    version: "1.0.6",
+    SECTION: 1,
+    CATEGORY: 2,
+    SUB_CATEGORY: 3,
+
+    debugEnabled: _satellite.getVar('debugEnabled') == "true" || window.localStorage.sdsat_debug == "true",
+    metaPropertyMapping: _satellite.getVar('TC_AAM_META_PROPERTY_MAPPING'),
+    searchConfig: _satellite.getVar('TC_AAM_SEARCH_CONFIG'),
+    stripSpecialChars: _satellite.getVar('TC_AAM_STRIP_SPECIAL_CHAR') ? _satellite.getVar('TC_AAM_STRIP_SPECIAL_CHAR') : function () {return "NO TC_AAM_STRIP_SPECIAL_CHAR Data element defined"},
+    siteContext: null,
+
+    //It All Starts Here
+    main: function () {
+        try {
+            TCMediaAam.log("= Starting RUBICON TC_AAM object population =");
+            TCMediaAam.initializeTC_AAM();
+            TCMediaAam.collectData();
+            TCMediaAam.instrumentTC_AAM();
+            TCMediaAam.logObject(TC_AAM);
+            TCMediaAam.sendSignal();
+        } catch (exception) {
+            TCMediaAam.log("Unable to execute RUBICON TC_AAM object population: " + exception);
+        } finally {
+            TCMediaAam.log("= Finished RUBICON TC_AAM object population =");
+        }
+    },
+
+    // Initialise the Adobe Experience Manager Object
+    initializeTC_AAM: function () {
+        TCMediaAam.log("*** Initializing RUBICON TC_AAM object ***");
+        TC_AAM.site = '';
+        TC_AAM.language = '';
+        TC_AAM.pageName = '';
+        TC_AAM.section = '';
+        TC_AAM.category = '';
+        TC_AAM.subCategory = '';
+        TC_AAM.device = navigator.platform;
+        TC_AAM.deviceType = '';
+        TC_AAM.contentId = '';
+        TC_AAM.contentTitle = '';
+        TC_AAM.contentType = '';
+        TC_AAM.contentAuthor = '';
+        TC_AAM.referrer = document.referrer;
+        TC_AAM.url = document.URL;
+        TC_AAM.source = _satellite.getVar('AAM_SOURCE');
+        TCMediaAam.loadMetaTagValuesToObject("tcaam", TC_AAM);
+        TCMediaAam.loadTCSiteContext();
+    },
+
+    loadTCSiteContext: function () {
+        if(document.getElementById("tc-site-context") !== null ){
+            TCMediaAam.siteContext = document.getElementById("tc-site-context");
+            TCMediaAam.log("*********** tc-site-context IS loaded");
+        }else{
+            TCMediaAam.log("*********** tc-site-context is NOT loaded");
+        }
+    },
+
+    collectData: function () {
+
+        TC_AAM.site = TCMediaAam.retrieveSiteName();
+        TC_AAM.adCodeSite = TCMediaAam.retrieveAdCodeSite();
+        TC_AAM.language = TCMediaAam.retrieveLanguage();
+        TC_AAM.pageName = TCMediaAam.retrievePageName();
+        TC_AAM.section = TCMediaAam.retrieveSection();
+        TC_AAM.category = TCMediaAam.retrieveCategory();
+        TC_AAM.subCategory = TCMediaAam.retrieveSubCategory();
+        TC_AAM.contentId = TCMediaAam.retrieveContentId();
+        TC_AAM.contentTitle = TCMediaAam.retrieveContentTitle();
+        TC_AAM.contentAuthor = TCMediaAam.retrieveContentAuthor();
+        TC_AAM.contentType = TCMediaAam.retrieveContentType();
+        TC_AAM.deviceType = TCMediaAam.retrieveDeviceType();
+        TC_AAM.url = TCMediaAam.retrieveUrl();
+        TC_AAM.publicationDate = TCMediaAam.retrievePublicationDate();
+        TC_AAM.conceptIptc = TCMediaAam.retrieveConceptsIptc();
+        TC_AAM.conceptPeople = TCMediaAam.retrieveConceptsPeople();
+        TC_AAM.conceptPlaces = TCMediaAam.retrieveConceptsPlaces();
+        TC_AAM.conceptOrganization = TCMediaAam.retrieveConceptsOrganization();
+        TC_AAM.searchKeywords = TCMediaAam.retrieveSearchKeywords();;
+    },
+
+    instrumentTC_AAM: function () {
+        TCMediaAam.appendSearchRelatedProperties();
+        if (!TCMediaAam.isProdEnvironment()) {
+            TCMediaAam.discardTC_AAMProperties();
+        }
+    },
+
+    retrieveSiteName: function () {
+        if (TCMediaAam.getSiteConfig() && TCMediaAam.getSiteConfig().hasOwnProperty("name")) {
+            return TCMediaAam.getSiteConfig().name;
+        }
+        return ''
+    },
+
+    retrieveLanguage: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-language")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-language");
+        }
+        return ''
+    },
+
+    getSiteConfig: function () {
+        if (TCMediaAam.siteConfig) {
+            return TCMediaAam.siteConfig;
+        }
+        var siteNamesMap = _satellite.getVar("TC_AAM_SITE_CONFIG") || {};
+        for (var key in siteNamesMap) {
+            if (siteNamesMap.hasOwnProperty(key) && document.domain.indexOf(key) != -1) {
+                TCMediaAam.siteConfig = siteNamesMap[key];
+                break;
+            }
+        }
+        return TCMediaAam.siteConfig;
+    },
+
+    retrievePageName: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-pagename")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-pagename");
+        }
+        return ''
+    },
+
+    retrieveSection: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-section")) {
+            return TCMediaAam.stripSpecialChars(TCMediaAam.siteContext.getAttribute("data-tc-section"));
+        }
+        return ''
+    },
+
+    retrieveCategory: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-category")) {
+            return TCMediaAam.stripSpecialChars(TCMediaAam.siteContext.getAttribute("data-tc-category"));
+        }
+        return ''
+    },
+
+    retrieveSubCategory: function () {
+        //Not available yet in Rubicon
+        return '';
+    },
+
+    retrieveContentId: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-content-id")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-content-id");
+        }
+        return '';
+    },
+
+    retrieveContentTitle: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-content-title")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-content-title");
+        }
+        return '';
+    },
+
+    retrieveContentAuthor: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-content-author")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-content-author");
+        }
+        return '';
+    },
+
+    retrieveContentType: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-content-type")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-content-type");
+        }
+        return '';
+    },
+
+    retrieveConceptsIptc: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-concepts-iptc")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-concepts-iptc");
+        }
+        return '';
+    },
+
+    retrieveConceptsPeople: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-concepts-people")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-concepts-people");
+        }
+        return '';
+    },
+
+    retrieveConceptsPlaces: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-concepts-places")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-concepts-places");
+        }
+        return '';
+    },
+
+    retrieveConceptsOrganization: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-concepts-organization")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-concepts-organization");
+        }
+        return '';
+    },
+
+    retrieveConceptsOrganization: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-concepts-organization")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-concepts-organization");
+        }
+        return '';
+    },
+
+    retrieveSearchKeywords: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-content-search-keywords")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-content-search-keywords");
+        }
+        return '';
+    },
+
+    retrieveDeviceType: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-device")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-device");
+        }
+        return '';
+    },
+
+    retrieveUrl: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-url")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-url");
+        }
+        return '';
+    },
+
+    retrieveAdCodeSite: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-ad-code-site")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-ad-code-site");
+        }
+        return '';
+    },
+
+    retrievePublicationDate: function () {
+        if (TCMediaAam.siteContext && TCMediaAam.siteContext.hasAttribute("data-tc-publication-date")) {
+            return TCMediaAam.siteContext.getAttribute("data-tc-publication-date");
+        }
+        return '';
+    },
+
+
+
+    getTextForTag: function (elements, tagName) {
+        for (var index = 0; index < elements.length; index++) {
+            var element = elements.item(index);
+            if (element.tagName == tagName) {
+                return TCMediaAam.getTextContent(element);
+            }
+        }
+        return '';
+    },
+
+    retrieveMetaValues: function (propertyName) {
+        var metaTags = document.getElementsByTagName('meta');
+        var metaContent = [];
+        for (var i = 0; i < metaTags.length; i++) {
+            if (metaTags[i].getAttribute("property") == propertyName) {
+                metaContent.push(metaTags[i].getAttribute("content"));
+            }
+        }
+        return metaContent;
+    },
+
+    loadMetaTagValuesToObject: function (metaTagProperty, object) {
+        var metaTags = document.getElementsByTagName('meta');
+        var propertyNameRegexp = new RegExp(metaTagProperty);
+        for (var i = 0; i < metaTags.length; i++) {
+            var defaultPropertyName = metaTags[i].getAttribute("property");
+            if (propertyNameRegexp.test(defaultPropertyName)) {
+                var mappedProperty = TCMediaAam.metaPropertyMapping[defaultPropertyName];
+                var propertyName = (mappedProperty != null) ?
+                    TCMediaAam.formatMetaPropertyName(mappedProperty) : defaultPropertyName;
+                object[ propertyName ] = metaTags[i].getAttribute("content");
+            }
+        }
+        return object;
+    },
+
+    formatMetaPropertyName: function (propertyName) {
+        return propertyName.replace(/\./g, "_");
+    },
+
+    retrieveMetaValue: function (propertyName) {
+        var metaTags = TCMediaAam.retrieveMetaValues(propertyName);
+        return (metaTags != null && metaTags[0] !== undefined) ? metaTags[0] : "";
+    },
+
+    discardTC_AAMProperties: function () {
+        var prefix = _satellite.getVar('TC_AAM_DISCARD_PREFIX') || "discard_";
+        var keys = [];
+        for (var keyToStore in TC_AAM) {
+            if (TC_AAM.hasOwnProperty(keyToStore)) {
+                keys.push(keyToStore);
+            }
+        }
+        for (var index = 0; index < keys.length; index++) {
+            var key = keys[index];
+            var newKey = prefix + key;
+            if (TC_AAM.hasOwnProperty(key) && key.indexOf(prefix) == -1) {
+                TC_AAM[newKey] = TC_AAM[key];
+                delete TC_AAM[key];
+            }
+        }
+    },
+
+    isProdEnvironment: function () {
+        var productionDomains = _satellite.getVar('TC_AAM_PRODUCTION_HOSTS') || [];
+        for (var index = 0; index < productionDomains.length; index++) {
+            if (document.location.hostname == productionDomains[index]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    appendSearchRelatedProperties: function () {
+        if (TCMediaAam.isSearch()) {
+            TC_AAM.section = "search";
+            TC_AAM.searchKeywords = TCMediaAam.findSearchKeywords();
+        }
+    },
+
+    findSearchKeywords: function () {
+        // We support the query string for the moment...
+        // Different search types wil be added later on if necessary
+        if (TCMediaAam.searchConfig.searchType == "QUERY_STRING") {
+            var searchPairs = document.location.search.substring(1).split("&");
+            var searchParameters = TCMediaAam.searchConfig.searchParameters || [];
+            for (var index = 0; index < searchParameters.length; index++) {
+                var searchParameter = searchParameters[index];
+                for (var partIndex = 0; partIndex < searchPairs.length; partIndex++) {
+                    var pairParts = searchPairs[partIndex].split("=");
+                    if (pairParts.length > 0 && pairParts[0] == searchParameter) {
+                        return pairParts[1];
+                    }
+                }
+            }
+        }
+        // Subsequent search in advanced
+        var elementById = document.getElementById("searchQueryStringText");
+        if (elementById && elementById.value) {
+            return elementById.value.trim();
+        }
+        return '';
+    },
+
+    isSearch: function () {
+        var searchDiscriminator = "searchParameterDiscriminators";
+        if (TCMediaAam.searchConfig.hasOwnProperty(searchDiscriminator) && document.location.search) {
+            var searchParameterDiscriminators = TCMediaAam.searchConfig[searchDiscriminator] || [];
+            var queryStringParams = document.location.search.replace('?', '').split("&");
+            for (var index = 0; index < searchParameterDiscriminators.length; index++) {
+                var configParam = searchParameterDiscriminators[index];
+                for (var paramIndex = 0; paramIndex < queryStringParams.length; paramIndex++) {
+                    if (queryStringParams[paramIndex] == configParam) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    },
+
+    getTextContent: function (element) {
+        if (element != null && element.textContent) {
+            var textContent = element.textContent;
+            return  textContent.replace(/\n|\r/g, "").trim();
+        }
+        return '';
+    },
+
+    retrieveBreadcrumbsPart: function (position) {
+        var breadcrumbs = document.querySelectorAll(".breadcrum");
+        if (breadcrumbs && breadcrumbs.length > 0) {
+            var itemList = breadcrumbs[0];
+            if (itemList && itemList.childElementCount > 0) {
+                var textContent = TCMediaAam.getTextContent(itemList.children[position]);
+                return  textContent.replace('>', '');
+            }
+        }
+        return '';
+    },
+
+    getLastPathnamePart: function () {
+        var pathnameParts = TCMediaAam.getPathnameParts();
+        if (pathnameParts.length > 0) {
+            return pathnameParts[pathnameParts.length - 1];
+        }
+        return '';
+    },
+
+    getPathnameParts: function () {
+        return document.location.pathname.split("/").slice(1);
+    },
+
+    classifiedButtonClicked: function () {
+        try {
+            TC_AAM.section = "Classifieds";
+            TCMediaAam.instrumentTC_AAM();
+            TCMediaAam.logObject(TC_AAM);
+            TCMediaAam.sendSignal();
+        } catch (exception) {
+            TCMediaAam.log("Unable to execute UNIS TC_AAM object population: " + exception);
+        }
+    },
+
+    isVideoSection: function () {
+        return document && document.domain.indexOf("video.") != -1;
+    },
+
+    sendSignal: function () {
+        _satellite.getVar('TC_AAM_DIL');
+    },
+
+    logAvailable: function () {
+        return window.console && TCMediaAam.debugEnabled;
+    },
+
+    log: function (message) {
+        if (TCMediaAam.logAvailable()) {
+            window.console.log(message);
+        }
+    },
+
+    logObject: function (object) {
+        if (TCMediaAam.logAvailable() && window.console.dir) {
+            window.console.dir(object);
+        }
+    }
+};
+
+TCMediaAam.main();
